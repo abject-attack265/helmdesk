@@ -1,0 +1,347 @@
+{
+  "meta": {
+    "name": "zh-recall-bench",
+    "description": "中文召回评测集（扩充版）。结构沿用 DuReader-Retrieval 与 C-MTEB；新增 query.type 标签便于按难度拆解指标。每条 query 至少匹配一个 positive 文档，其余文档作干扰项；同主题集群（HTTP/HTTPS/HTTP2、TCP握手/挥手/UDP、Redis持久化/集群/哨兵、淘宝退款/京东退款 等）作为困难负样本。",
+    "sources": [
+      "https://github.com/baidu/DuReader/tree/master/DuReader-Retrieval",
+      "https://huggingface.co/datasets/C-MTEB/CovidRetrieval",
+      "https://huggingface.co/datasets/C-MTEB/T2Retrieval"
+    ],
+    "query_types": {
+      "lexical": "查询与正例存在明显字面重合，FTS 应能直接命中",
+      "paraphrased": "查询与正例几乎无共同关键词，仅靠语义相近，向量模型应优于 FTS",
+      "conceptual": "查询是抽象/上位概念，需要语义+排序联合判断",
+      "disambiguation": "同主题集群里挑出正例，考察 rerank 区分能力",
+      "multi_positive": "一个查询对应多个正例文档"
+    }
+  },
+  "documents": [
+    {
+      "id": "doc_sunflower_care",
+      "title": "太阳花的养殖方法",
+      "content": "# 太阳花的养殖方法\n\n太阳花又称松叶牡丹，喜光耐旱，对土壤要求不严，砂质壤土即可。栽种宜在春末或夏初，发芽适温为 21 到 24 摄氏度。避免长期阴雨导致烂根，盆土微干时再浇透水，开花期每两周追施一次稀薄液肥。冬季低于 10 摄氏度移入室内或覆膜保温，否则容易冻伤根系。扦插繁殖成活率较高。"
+    },
+    {
+      "id": "doc_pothos_care",
+      "title": "绿萝的养护要点",
+      "content": "# 绿萝的养护\n\n绿萝喜温暖湿润、半阴环境，最佳生长温度 20 至 28 摄氏度。叶片喜光但忌强光直射，散射光下颜色最翠。土壤保持湿润但不要积水，夏季可向叶面喷雾增加湿度。冬季气温低于 10 摄氏度会出现黄叶，应避免冷风直吹。可水培或土培，水培每周换水一次。"
+    },
+    {
+      "id": "doc_succulent_care",
+      "title": "多肉植物日常护理",
+      "content": "# 多肉植物的护理\n\n多肉植物大多原产干旱地区，耐旱怕涝。建议使用泥炭混颗粒土的疏松基质，浇水遵循干透浇透原则。生长期间充足光照才能保持紧凑株型与上色；夏季高温要避免暴晒并适当遮阴。冬季多数品种休眠，温度低于 5 摄氏度需移入室内，少浇水。叶插与砍头是常见繁殖方式。"
+    },
+    {
+      "id": "doc_lavender_care",
+      "title": "薰衣草的种植要点",
+      "content": "# 薰衣草的种植\n\n薰衣草偏好凉爽干燥、阳光充足的环境，原产地中海气候。土壤要求疏松透气、偏碱性，黏重土壤需混入砂或珍珠岩。浇水宁干勿湿，过湿容易引发根腐病。花后及时修剪以促进多次开花，冬季耐寒但需防止根系长期浸泡积水。常见品种有真正薰衣草、宽叶薰衣草与杂交薰衣草。"
+    },
+    {
+      "id": "doc_covid_booster",
+      "title": "新冠加强针接种说明",
+      "content": "# 新冠加强针\n\n完成新冠基础免疫满 6 个月的人群，可在户籍地或居住地接种点接种加强针。常见组合包括灭活疫苗同源加强、灭活+重组蛋白序贯、灭活+腺病毒载体序贯。接种后 30 分钟在留观点观察，常见反应包括接种部位酸胀、低热和疲乏，通常 24 至 48 小时自行缓解。高风险人群、医务人员、老年人优先接种。"
+    },
+    {
+      "id": "doc_hpv_vaccine",
+      "title": "HPV 疫苗接种指南",
+      "content": "# HPV 疫苗接种\n\n人乳头瘤病毒疫苗用于预防由高危型 HPV 引起的宫颈癌、肛门癌等。目前国内可选二价、四价和九价三种，分别覆盖不同基因型。世界卫生组织推荐 9 至 14 岁未发生性行为的女性优先接种，二价和四价适龄范围扩展至 9 至 45 岁。接种程序通常为 0、1、6 月三剂或 0、6 月两剂。"
+    },
+    {
+      "id": "doc_flu_vaccine",
+      "title": "流感疫苗接种建议",
+      "content": "# 流感疫苗\n\n流感疫苗每年根据世界卫生组织推荐的毒株组合更新，包含三价或四价两种。重点推荐 6 月龄以上婴幼儿、孕妇、慢性病患者、老年人和医务人员每年接种。最佳接种时间为流感季前的 9 月到 11 月，接种后约 2 周产生保护性抗体。鸡蛋严重过敏者需在医院观察接种，常见副反应轻微且短暂。"
+    },
+    {
+      "id": "doc_pcr_test",
+      "title": "核酸检测注意事项",
+      "content": "# 核酸采样注意事项\n\n采样前 30 分钟避免进食、饮水、吸烟、嚼口香糖，以免影响样本质量。采样前 2 小时不要使用含酒精的漱口水。采样时按要求张大嘴发出'啊'声，避免在咽拭子接触时咳嗽。混采结果异常需立即单采复核，单采阴性结果一般 6 至 12 小时内可查询。如属于密接或来自高风险地区需主动报备。"
+    },
+    {
+      "id": "doc_health_code",
+      "title": "健康码红码处理流程",
+      "content": "# 健康码红码处理\n\n健康码变成红码通常是因为系统判定行程涉及中高风险地区，或近期与确诊病例有时空伴随。持红码人员不可乘坐公共交通、进入公共场所，应原地等待社区或防控办通知。后续按要求做核酸检测、配合流调，红码一般在完成集中隔离或核酸结果连续阴性后转黄、转绿。如认为误判可通过本地健康码 APP 申诉。"
+    },
+    {
+      "id": "doc_income_tax",
+      "title": "个人所得税起征点与速算扣除",
+      "content": "# 个税起征点与速算扣除数\n\n中国大陆居民个人所得税综合所得起征点为每月 5000 元。年度综合所得使用七级超额累进税率，3% 到 45%。年应纳税所得额不超过 36000 元的部分按 3%、超过 36000 至 144000 部分按 10%（速算扣除数 2520）等。除起征点外还可扣除子女教育、继续教育、大病医疗、住房贷款利息、住房租金、赡养老人、3 岁以下婴幼儿照护等专项附加扣除。"
+    },
+    {
+      "id": "doc_social_security",
+      "title": "社保缴费基数说明",
+      "content": "# 社保缴费基数\n\n社保缴费基数依据上年度本人月平均工资核定，下限不低于上年度全省全口径城镇单位就业人员月平均工资的 60%，上限不超过 300%。缴费基数会逐年随社平工资调整。基数过高会增加企业与个人现金支出，但有利于将来养老金的待遇水平；基数过低短期省钱但会影响养老和医保的累计权益。灵活就业人员可在上下限之间自行选择档次。"
+    },
+    {
+      "id": "doc_housing_fund",
+      "title": "公积金提取条件",
+      "content": "# 住房公积金提取\n\n职工有以下情形可申请提取住房公积金：购买、建造、翻建、大修自住住房；偿还自住房贷款本息；租赁住房支付租金；离休、退休；完全丧失劳动能力并与单位终止劳动关系；出境定居等。租房提取与还贷提取一般无需购房合同原件，但需提供承租合同或贷款合同。多数城市支持线上提取，到账周期 1 至 5 个工作日。"
+    },
+    {
+      "id": "doc_mortgage_rate",
+      "title": "房贷利率计算说明",
+      "content": "# 房贷利率\n\n商业性个人住房贷款利率以 LPR（贷款市场报价利率）为定价基准，加上银行点差形成实际执行利率。首套房通常 LPR 减点或不加点，二套房在 LPR 基础上加 60 个基点左右，各地政策略有差异。重定价周期最短 1 年，可在贷款合同中约定每年或每月调整，对应 LPR 一旦上行或下行，月供金额随之变化。常见还款方式包括等额本息、等额本金。"
+    },
+    {
+      "id": "doc_consumer_loan",
+      "title": "消费贷款常见误区",
+      "content": "# 消费贷款误区\n\n消费贷款利率多以年化形式展示，但实际还款方式不同会导致真实成本差异显著。例如先息后本与等额本金的年化等价利率可能相差近一倍。借款人需关注 IRR（内部收益率）、APR 与名义利率的区别。消费贷资金严禁流入股市、楼市、虚拟货币交易，违规使用会被提前收回贷款并影响个人征信。"
+    },
+    {
+      "id": "doc_http_vs_https",
+      "title": "HTTP 与 HTTPS 协议差异",
+      "content": "# HTTP 与 HTTPS\n\nHTTP 是一种基于 TCP 的明文应用层协议，默认端口 80；HTTPS 在 HTTP 之下、TCP 之上加入 TLS/SSL 层，默认端口 443，使用证书完成身份认证与对称密钥协商。HTTPS 通过非对称加密协商密钥、对称加密传输数据，可保证内容机密性、完整性和服务器身份可信。现代浏览器对 HTTP 站点会标记不安全。"
+    },
+    {
+      "id": "doc_http2",
+      "title": "HTTP/2 关键特性",
+      "content": "# HTTP/2 特性\n\nHTTP/2 在 HTTP/1.1 之上引入二进制分帧、多路复用、头部压缩 HPACK、服务器推送等机制。多路复用允许同一 TCP 连接上并行多个请求与响应，解决了 HTTP/1.1 队头阻塞问题。HPACK 通过静态表+动态表+霍夫曼编码降低头部体积。HTTP/2 大多数实现要求 TLS（h2over TLS），明文 h2c 较少使用。"
+    },
+    {
+      "id": "doc_tcp_handshake",
+      "title": "TCP 三次握手过程",
+      "content": "# TCP 三次握手\n\nTCP 三次握手用于在客户端与服务器之间建立全双工连接：客户端发送 SYN=1、seq=x；服务端回复 SYN=1、ACK=1、seq=y、ack=x+1；客户端再发送 ACK=1、ack=y+1。三次握手保证双方收发能力都正常，避免半连接资源浪费。若只两次握手，服务端无法确认客户端是否真正收到响应，可能在网络重复 SYN 时出现错误连接。"
+    },
+    {
+      "id": "doc_tcp_close",
+      "title": "TCP 四次挥手过程",
+      "content": "# TCP 四次挥手\n\nTCP 关闭连接需要四次挥手：主动关闭方发送 FIN，进入 FIN_WAIT_1；被动方收到后回复 ACK，进入 CLOSE_WAIT；被动方处理完待发送数据再发送 FIN，进入 LAST_ACK；主动方回复 ACK 后进入 TIME_WAIT，等待 2MSL 后真正释放。TIME_WAIT 用于确保最后一个 ACK 到达对端，并防止旧报文段在新连接中重现。"
+    },
+    {
+      "id": "doc_udp",
+      "title": "UDP 协议与适用场景",
+      "content": "# UDP 协议\n\nUDP 是无连接、不可靠、无序的传输层协议，仅提供端口复用与校验和。相比 TCP，UDP 不维护连接状态、不做拥塞控制、不保证送达顺序，因此延迟低、开销小。常用于实时音视频、DNS 查询、游戏对战、SNMP 监控等对时延敏感、可容忍少量丢包的场景。QUIC 在 UDP 之上重新实现了类似 TCP 的可靠传输。"
+    },
+    {
+      "id": "doc_dns_resolution",
+      "title": "DNS 解析过程",
+      "content": "# DNS 解析\n\n浏览器访问域名时先查询本地缓存与 hosts 文件，未命中则向本地 DNS 服务器发起递归查询。本地 DNS 通过迭代方式依次询问根域名服务器、顶级域名服务器、权威域名服务器，最终得到 IP 地址并缓存。TTL 决定缓存时长。常见记录类型包括 A、AAAA、CNAME、MX、TXT。DoH 与 DoT 通过 HTTPS/TLS 加密 DNS 查询防止中间人窥探与劫持。"
+    },
+    {
+      "id": "doc_cdn_basics",
+      "title": "CDN 工作原理",
+      "content": "# CDN 工作原理\n\n内容分发网络通过在全球部署边缘节点缓存静态资源，使用户从地理位置最近的节点获取内容，从而降低延迟、减轻源站压力。CDN 调度通常基于 DNS 解析或 HTTP 重定向，把请求引到合适的节点。常见缓存策略包括按 URL、按 Header 与 Cookie 区分。回源时可启用 Range 分片、压缩、私有协议加速等优化手段。"
+    },
+    {
+      "id": "doc_bplus_tree",
+      "title": "B+ 树为何成为数据库索引主流",
+      "content": "# B+ 树索引\n\nB+ 树是 B 树的一种变体，所有数据只存放在叶子结点，非叶子结点只保存索引键。叶子结点之间通过链表相连，便于范围查询和顺序扫描。B+ 树高度通常 3 到 4 层即可索引上亿条记录，平均查询次数稳定且与数据量呈对数关系。相比哈希索引，B+ 树支持范围、排序、前缀匹配，因此被 MySQL InnoDB、PostgreSQL 等关系型数据库默认采用。"
+    },
+    {
+      "id": "doc_btree",
+      "title": "B 树与 B+ 树的区别",
+      "content": "# B 树与 B+ 树\n\nB 树（B-Tree）所有结点既保存索引键也保存数据指针，节点结构相对独立；B+ 树则只有叶子保存数据，非叶子只保存键值。B+ 树叶子链表使得范围查询效率更高，而 B 树单点查找路径可能更短。LSM-Tree 与 B+ 树的最大差别在于写入路径：B+ 树原地更新，LSM-Tree 顺序追加然后异步合并，对写密集场景更友好。"
+    },
+    {
+      "id": "doc_isolation_levels",
+      "title": "事务隔离级别一览",
+      "content": "# 事务隔离级别\n\nSQL 标准定义了四种事务隔离级别：读未提交（脏读可能）、读已提交（解决脏读，但有不可重复读）、可重复读（解决不可重复读，但有幻读）、可串行化（最高级别，避免幻读但并发性能最差）。MySQL InnoDB 默认 RR 并通过间隙锁缓解幻读；PostgreSQL 默认 RC。隔离级别越高一致性越强，但锁与多版本管理代价也越大。"
+    },
+    {
+      "id": "doc_redis_persistence",
+      "title": "Redis 持久化机制",
+      "content": "# Redis 持久化\n\nRedis 支持 RDB 快照与 AOF 追加两种持久化方式。RDB 在指定时间窗口内根据写操作次数触发 fork 子进程做内存快照，文件紧凑、恢复快，但可能丢失最近若干秒的数据。AOF 通过 appendonly 文件记录每条写命令，配合 fsync 策略可在性能与可靠性间权衡，always 最安全但开销大，everysec 兼顾性能与持久性。生产可同时开启 RDB+AOF 并配合 RDB 触发 AOF 重写。"
+    },
+    {
+      "id": "doc_redis_cluster",
+      "title": "Redis Cluster 数据分片",
+      "content": "# Redis Cluster\n\nRedis Cluster 通过哈希槽分片，固定 16384 个 slot 均匀分配到节点上。客户端通过 CRC16(key) mod 16384 定位 slot，节点之间使用 gossip 协议交换拓扑与故障信息。集群支持自动故障转移，主节点失联超过 cluster-node-timeout 后由从节点投票升主。多键操作需要使用 hash tag '{}' 把相关 key 路由到同一 slot，否则会触发 MOVED 或 CROSSSLOT 错误。"
+    },
+    {
+      "id": "doc_redis_sentinel",
+      "title": "Redis 哨兵高可用",
+      "content": "# Redis Sentinel\n\nRedis Sentinel 用于在单主多从架构下实现自动故障转移。哨兵集群至少需要 3 个节点，通过 Raft 一致性投票判断主节点是否客观下线。检测到主下线后，哨兵协调从节点选举出新主，剩余从节点重定向同步源；同时通知客户端拓扑变化。Sentinel 不做数据分片，单主写性能受限，更适合中小规模缓存场景。"
+    },
+    {
+      "id": "doc_mysql_replication",
+      "title": "MySQL 主从复制原理",
+      "content": "# MySQL 主从复制\n\nMySQL 主从复制基于 binlog：主库把所有写操作记录到二进制日志，IO 线程在从库拉取 binlog 后写入 relay log，SQL 线程读取 relay log 重放到从库数据。复制模式分为异步、半同步与组复制 MGR。半同步要求至少一个从库收到 binlog 才返回客户端，提高数据安全性但增加延迟。MGR 基于 Paxos 实现多主一致性。"
+    },
+    {
+      "id": "doc_kafka_basic",
+      "title": "Kafka 分区与消费者组",
+      "content": "# Kafka 分区\n\nKafka topic 由若干 partition 组成，每个 partition 在磁盘上是一段顺序写的日志文件。同一消费者组内一个 partition 只能被一个消费者实例消费，从而实现水平扩展。增加分区可提升并行度但会增加文件句柄与控制器压力。生产者通过 key 哈希或自定义策略选择分区，保证同 key 消息顺序到达。"
+    },
+    {
+      "id": "doc_kafka_replication",
+      "title": "Kafka 副本与 ISR 机制",
+      "content": "# Kafka 副本与 ISR\n\nKafka 每个分区可设置多个副本，其中一个为 leader，其余为 follower。生产者写 leader，follower 异步拉取。能持续跟上 leader 的副本组成 ISR（in-sync replicas）。当 acks=all 时，leader 必须收到所有 ISR 的确认才返回成功。min.insync.replicas 限制 ISR 最小数量，保证写入时仍有足够副本承接。"
+    },
+    {
+      "id": "doc_rocketmq",
+      "title": "RocketMQ 顺序与事务消息",
+      "content": "# RocketMQ\n\nRocketMQ 是阿里开源的高吞吐消息队列。普通消息按队列负载均衡分发；顺序消息通过把同一业务键的消息发送到同一队列保证局部顺序；事务消息基于二阶段提交：先发送半消息预占，业务提交后再确认或回滚，broker 会定时回调本地事务状态做反查。延迟消息通过预设若干级别，按时间投递到目标队列。"
+    },
+    {
+      "id": "doc_distributed_tx",
+      "title": "分布式事务模式比较",
+      "content": "# 分布式事务\n\n分布式事务常见模式包括 2PC（两阶段提交）、3PC、TCC（Try-Confirm-Cancel）、SAGA、本地消息表、最大努力通知、基于消息队列的可靠投递。2PC 强一致但阻塞且单点风险大；TCC 适合资金类强一致场景，但侵入业务、需要写补偿逻辑；SAGA 通过一系列本地事务+正反向操作实现长事务最终一致；本地消息表与 MQ 适合非强一致场景。CAP 中通常牺牲 C 换 A 与 P。"
+    },
+    {
+      "id": "doc_saga_pattern",
+      "title": "SAGA 模式适用场景",
+      "content": "# SAGA 模式\n\nSAGA 把一个长事务拆成若干本地子事务，每个子事务都有一个补偿动作。如果某一步失败，则按照反向顺序触发已成功子事务的补偿动作回滚到一致状态。SAGA 分为编排式（Orchestration，由协调器统一调度）和编舞式（Choreography，依赖事件驱动）。适合跨服务、跨数据库、跨地域的最终一致场景，但需要业务侧设计幂等与补偿逻辑。"
+    },
+    {
+      "id": "doc_k8s_pod",
+      "title": "Kubernetes Pod 概念",
+      "content": "# Kubernetes Pod\n\nPod 是 Kubernetes 中最小的调度与部署单位，由一个或多个共享网络、共享存储卷的容器组成。Pod 内容器共享同一个 IPC、UTS、Network namespace，可通过 localhost 互相访问。Pod 是临时的，由 Deployment / StatefulSet 等控制器管理，重启后 IP 会变化，因此暴露服务通常配合 Service 与 DNS。"
+    },
+    {
+      "id": "doc_k8s_deployment",
+      "title": "Kubernetes Deployment 滚动更新",
+      "content": "# Kubernetes Deployment\n\nDeployment 通过 ReplicaSet 管理无状态 Pod 集合，支持滚动更新与回滚。maxSurge 与 maxUnavailable 控制更新窗口，可实现先创建新版本 Pod 再销毁旧版本的零停机部署。kubectl rollout history 可查看版本，rollout undo 一键回滚到上一个 ReplicaSet。配合 readiness/liveness 探针可避免流量切到尚未就绪的实例。"
+    },
+    {
+      "id": "doc_k8s_service",
+      "title": "Kubernetes Service 类型",
+      "content": "# Kubernetes Service\n\nService 通过标签选择器把请求路由到一组 Pod。常见类型：ClusterIP（默认，集群内部访问）、NodePort（在每个节点上暴露端口）、LoadBalancer（向云厂商申请公网负载均衡器）、ExternalName（CNAME 别名）。Service 借助 kube-proxy 维护 iptables/ipvs 规则，对外稳定 IP 屏蔽后端 Pod 漂移。"
+    },
+    {
+      "id": "doc_docker_image",
+      "title": "Docker 镜像分层与缓存",
+      "content": "# Docker 镜像分层\n\nDocker 镜像由若干只读层叠加而成，每条 Dockerfile 指令产生一层。运行容器时在顶部再加一层可写层。镜像分层利于缓存与共享：相同基础层的多个镜像可以复用本地层。多阶段构建（multi-stage build）通过多个 FROM 指令，把构建阶段产物拷贝到精简镜像中，缩小最终镜像体积。.dockerignore 与合理的 COPY 顺序能进一步优化缓存命中率。"
+    },
+    {
+      "id": "doc_service_mesh",
+      "title": "Service Mesh 与 Sidecar 模式",
+      "content": "# Service Mesh\n\nService Mesh 通过在每个服务实例旁注入 sidecar 代理，把服务间通信、限流、熔断、重试、加密、可观测能力下沉到基础设施，无需在业务代码里耦合通信逻辑。控制面（如 Istio Pilot/istiod）下发策略与证书，数据面（如 Envoy）执行流量管理。相比传统微服务 SDK，Mesh 更易统一治理、跨语言一致，但引入额外延迟与运维复杂度。"
+    },
+    {
+      "id": "doc_great_wall",
+      "title": "万里长城基本数据",
+      "content": "# 万里长城\n\n长城是中国古代用于军事防御的连续性城墙系统，最早可追溯至春秋战国，秦汉、明代陆续大规模修筑。明长城西起嘉峪关，东至辽东虎山，总长度根据国家文物局 2012 年公布数据约 8851.8 公里。墙体材料因地制宜，包括夯土、砖石、毛石、芦苇夹土等。世界遗产名录 1987 年收录长城。"
+    },
+    {
+      "id": "doc_forbidden_city",
+      "title": "故宫博物院概况",
+      "content": "# 故宫博物院\n\n故宫位于北京中轴线上，是明清两代皇宫，又称紫禁城。占地约 72 万平方米，建筑面积 15 万平方米，现存古建筑 980 余座、房屋约 8700 余间。1925 年成立故宫博物院，馆藏文物超过 186 万件，包括陶瓷、书画、玉器、青铜、宫廷文物等。1987 年被列入世界遗产名录，是世界上规模最大、保存最完整的木结构宫殿建筑群之一。"
+    },
+    {
+      "id": "doc_mogao_caves",
+      "title": "敦煌莫高窟世界遗产",
+      "content": "# 莫高窟\n\n莫高窟俗称千佛洞，位于甘肃省敦煌市鸣沙山东麓断崖上。现存洞窟 735 个、壁画 4.5 万平方米、彩塑 2400 余尊，是中国规模最大、内容最丰富的佛教艺术圣地。营建始于前秦建元二年，历经十六国、北朝、隋、唐、五代、宋、西夏、元等十多个朝代。1987 年被列入世界遗产名录，现由敦煌研究院负责保护研究。"
+    },
+    {
+      "id": "doc_terracotta",
+      "title": "秦始皇兵马俑",
+      "content": "# 秦始皇兵马俑\n\n秦始皇兵马俑位于陕西省西安市临潼区，是秦始皇陵的陪葬坑。已发掘的一号坑、二号坑、三号坑共出土兵马俑近 8000 件，战车百余乘、兵器数万件。陶俑形态生动，每件面部表情、发饰、铠甲都不相同，被誉为'世界第八大奇迹'。1987 年与秦始皇陵共同列入世界遗产名录。"
+    },
+    {
+      "id": "doc_high_speed_rail",
+      "title": "中国高铁运营里程",
+      "content": "# 中国高铁\n\n中国铁路总营业里程已突破 15 万公里，其中高铁运营里程超过 4 万公里，居世界第一。设计时速 350 公里的复兴号 CR400 系列已在京沪、京津、京张等多条线路开行。高铁选址通常采用桥隧为主、平地为辅的方式，减少占地与坡度。售票系统 12306 支持人脸识别检票、电子客票与候补购票。"
+    },
+    {
+      "id": "doc_yangtze_river",
+      "title": "长江干流基本资料",
+      "content": "# 长江\n\n长江发源于青藏高原唐古拉山主峰各拉丹冬雪山，全长约 6300 公里，是亚洲第一长河、世界第三长河。流域面积约 180 万平方公里，约占中国国土面积的 18.8%。长江干流自西向东穿越 11 个省（自治区、直辖市），最终在上海崇明岛附近注入东海。三峡、葛洲坝是长江干流上重要的水利工程。"
+    },
+    {
+      "id": "doc_taobao_refund",
+      "title": "淘宝退款流程",
+      "content": "# 淘宝退款\n\n在淘宝下单后，未发货状态下可直接申请仅退款，款项原路退回支付账户，通常 2 小时到 1 个工作日到账。已发货可选退货退款，按提示填写退货原因并提交物流单号，卖家确认收货后支付宝陆续退回。如卖家不同意可在 5 天内申请淘宝官方介入。维权超时未处理，系统自动倾向于消费者，但需要保留聊天记录与签收凭据。"
+    },
+    {
+      "id": "doc_jd_refund",
+      "title": "京东退款流程",
+      "content": "# 京东退款\n\n京东自营商品支持 7 天无理由退换，部分品类延长到 30 天。退货时可选预约上门取件，京东物流上门后将商品退回库房，仓库验收后退款。退款一般 1 至 3 个工作日到京东账户、原渠道或银行卡。第三方 POP 商家退款由商家审核，时长视商家而定，超时可申请京东客服介入。Plus 会员享受免运费换货等额外权益。"
+    },
+    {
+      "id": "doc_wechat_transfer",
+      "title": "微信转账到账时间",
+      "content": "# 微信转账\n\n微信好友之间转账默认实时到账，对方需在 24 小时内点击收钱按钮，否则资金原路退回。如担心转错，可在转账时切换为 '2 小时到账' 或 '24 小时到账'，方便在异常时撤回。对方实名认证后才能完成大额收款，单笔与日累计金额受限于实名等级与银行卡通道。零钱通可作为收款账户。"
+    },
+    {
+      "id": "doc_alipay_transfer",
+      "title": "支付宝转账规则",
+      "content": "# 支付宝转账\n\n支付宝实名认证用户之间转账实时到账，单日额度按账户等级与银行卡通道决定。可选 '2 小时到账' 或 '次日到账'，在到账前可撤回。跨行大额转账可能需要短信、人脸或银行验证码。境外汇款走 '汇款给境外'，需要填写收款人姓名、SWIFT 与银行账号，到账周期 1 至 5 个工作日不等。"
+    },
+    {
+      "id": "doc_alipay_security",
+      "title": "支付宝账号被盗紧急处置",
+      "content": "# 支付宝账号被盗\n\n发现账号异常应立即在支付宝 APP '账户安全中心' 启用一键挂失，冻结账户余额、余额宝与已签约的免密支付。同时修改登录密码与支付密码、解绑可疑设备，并查看近期交易明细。可拨打 95188 客服报案。若有资金损失，应在 24 小时内向公安机关报案并联系支付宝客服申请赔付，留存转账截图与对方账户信息以便取证。"
+    },
+    {
+      "id": "doc_meituan_delivery",
+      "title": "美团外卖配送范围",
+      "content": "# 美团外卖配送\n\n美团外卖的配送范围由商家与平台共同设定，半径一般在 3 至 5 公里。下单后由附近的骑手抢单或调度，按距离与餐厅出餐速度估算预计送达时间。雨雪天气、用餐高峰会临时延长。如超时可在订单页申请超时赔付，按平台规则发放抵扣券。骑手到达后请通过订单页确认收货，避免影响骑手收入。"
+    },
+    {
+      "id": "doc_express_insurance",
+      "title": "快递保价赔付规则",
+      "content": "# 快递保价\n\n寄件人可在下单时选择保价并申报物品声明价值，按保价金额支付保费。若快递在运输途中丢失或损坏，承运快递公司按声明价值与实际损失中较低者赔付。未保价的快递通常按运费的 3 至 7 倍赔付，上限较低。贵重物品建议提前拍照、保留单据，便于理赔时举证。理赔申请一般需要在签收后 7 至 15 天内提出。"
+    },
+    {
+      "id": "doc_shunfeng_express",
+      "title": "顺丰特色服务",
+      "content": "# 顺丰快递\n\n顺丰是国内速度领先的快递公司，主要业务包括标快、特快、即日、次晨达、冷链、医药与跨境。标快为陆运可选 1 至 3 日达，特快配合自营飞机网络实现核心城市次日达。生鲜冷链使用冷藏车与保温箱，全程温控可视化。客服热线 95338 支持上门取件、跨城寄送与签收异常处理。"
+    },
+    {
+      "id": "doc_money_fund",
+      "title": "货币基金特点",
+      "content": "# 货币基金\n\n货币基金主要投资银行存款、短期国债、央行票据、同业存单等高流动性低风险资产，目标是给出与活期存款相比更高的收益。常见 T+0 快赎额度被监管限制在 1 万元以内，超出部分一般 T+1 到账。年化收益率波动小，七日年化通常在 1.5% 到 3% 之间。代表产品如余额宝（天弘基金）、零钱通。"
+    },
+    {
+      "id": "doc_bond_fund",
+      "title": "债券基金风险与收益",
+      "content": "# 债券基金\n\n债券基金主要投资国债、地方债、政策性金融债、信用债等。按持仓比例分为纯债基金、一级债基（可打新股）、二级债基（可少量买股票）。债券基金净值会随市场利率上升而下跌，反之亦然；信用债基金还面临违约风险。年化收益通常 3% 到 8%，但短期可能净值回撤，适合中长期持有。"
+    },
+    {
+      "id": "doc_stock_pe",
+      "title": "股票市盈率 PE 解读",
+      "content": "# 股票市盈率\n\n市盈率（Price-Earnings Ratio，PE）等于股价除以每股收益，反映投资者愿意为公司每元盈利支付的价格。静态市盈率使用上一财年报告，动态市盈率使用最近 12 个月或预测利润。PE 越高说明估值越贵，但成长性强的行业（科技、消费）天然 PE 较高。市盈率不适用于亏损企业，可考虑市销率 PS 或市净率 PB 作为补充指标。"
+    },
+    {
+      "id": "doc_etf_fund",
+      "title": "ETF 交易型开放式基金",
+      "content": "# ETF 基金\n\nETF（Exchange Traded Fund）是在交易所上市、像股票一样实时买卖的开放式基金，持仓多数追踪某一指数。投资者可通过二级市场以接近净值的价格买卖份额，也可在一级市场使用一篮子成分股进行申购赎回。ETF 透明度高、费率低，适合长期定投或资产配置。常见类型包括宽基 ETF、行业 ETF、跨境 ETF、商品 ETF 等。"
+    },
+    {
+      "id": "doc_personal_pension",
+      "title": "个人养老金账户",
+      "content": "# 个人养老金账户\n\n个人养老金账户是中国第三支柱养老体系，每年最高可缴存 12000 元，享受税前扣除。账户内资金只能用于购买符合监管要求的个人养老金产品，包括养老储蓄、专属商业养老保险、养老目标基金、养老理财四类。账户资金封闭运作，原则上达到法定退休年龄后才能领取。领取时按 3% 单独计算个税。"
+    }
+  ],
+  "queries": [
+    {"id": "q01", "type": "lexical", "text": "太阳花怎么养", "positive_doc_ids": ["doc_sunflower_care"]},
+    {"id": "q02", "type": "lexical", "text": "HTTPS 和 HTTP 有什么区别", "positive_doc_ids": ["doc_http_vs_https"]},
+    {"id": "q03", "type": "lexical", "text": "TCP 三次握手为什么需要三次", "positive_doc_ids": ["doc_tcp_handshake"]},
+    {"id": "q04", "type": "lexical", "text": "Kafka 分区的作用", "positive_doc_ids": ["doc_kafka_basic"]},
+    {"id": "q05", "type": "lexical", "text": "万里长城有多长", "positive_doc_ids": ["doc_great_wall"]},
+    {"id": "q06", "type": "lexical", "text": "Redis 持久化方式", "positive_doc_ids": ["doc_redis_persistence"]},
+    {"id": "q07", "type": "lexical", "text": "个税起征点是多少", "positive_doc_ids": ["doc_income_tax"]},
+    {"id": "q08", "type": "lexical", "text": "微信转账多久到账", "positive_doc_ids": ["doc_wechat_transfer"]},
+    {"id": "q09", "type": "lexical", "text": "莫高窟在哪里", "positive_doc_ids": ["doc_mogao_caves"]},
+    {"id": "q10", "type": "lexical", "text": "Kubernetes Pod 是什么", "positive_doc_ids": ["doc_k8s_pod"]},
+    {"id": "q11", "type": "paraphrased", "text": "网页加密传输的协议是怎么实现的", "positive_doc_ids": ["doc_http_vs_https"]},
+    {"id": "q12", "type": "paraphrased", "text": "数据库快速定位记录用的树状结构", "positive_doc_ids": ["doc_bplus_tree"]},
+    {"id": "q13", "type": "paraphrased", "text": "微服务之间统一通信治理的基础设施", "positive_doc_ids": ["doc_service_mesh"]},
+    {"id": "q14", "type": "paraphrased", "text": "网站把静态资源就近分发减少延迟", "positive_doc_ids": ["doc_cdn_basics"]},
+    {"id": "q15", "type": "paraphrased", "text": "城墙在西北一直延伸到辽东海边", "positive_doc_ids": ["doc_great_wall"]},
+    {"id": "q16", "type": "paraphrased", "text": "怎么让容器一次只启动到刚好就绪的实例上承接流量", "positive_doc_ids": ["doc_k8s_deployment"]},
+    {"id": "q17", "type": "paraphrased", "text": "把一个长流程拆成若干本地小事务并附补偿逻辑", "positive_doc_ids": ["doc_saga_pattern", "doc_distributed_tx"]},
+    {"id": "q18", "type": "paraphrased", "text": "短信验证码请求量大时怎样在不同消费实例间均衡", "positive_doc_ids": ["doc_kafka_basic"]},
+    {"id": "q19", "type": "paraphrased", "text": "缴纳额度按上年工资百分比换算的强制保障项目", "positive_doc_ids": ["doc_social_security"]},
+    {"id": "q20", "type": "paraphrased", "text": "可以买卖像股票一样的指数追踪基金", "positive_doc_ids": ["doc_etf_fund"]},
+    {"id": "q21", "type": "conceptual", "text": "为什么数据库默认选择 B+ 树而不是哈希索引", "positive_doc_ids": ["doc_bplus_tree"]},
+    {"id": "q22", "type": "conceptual", "text": "如何保证消息按顺序送达且支持重传", "positive_doc_ids": ["doc_tcp_handshake", "doc_udp"]},
+    {"id": "q23", "type": "conceptual", "text": "怎样在主节点故障时自动切换到新主", "positive_doc_ids": ["doc_redis_sentinel"]},
+    {"id": "q24", "type": "conceptual", "text": "事务在并发执行时怎么避免读到中间状态", "positive_doc_ids": ["doc_isolation_levels"]},
+    {"id": "q25", "type": "conceptual", "text": "应用部署后让流量逐步切到新版本", "positive_doc_ids": ["doc_k8s_deployment"]},
+    {"id": "q26", "type": "conceptual", "text": "把所有写操作记录到日志以便从库重放", "positive_doc_ids": ["doc_mysql_replication"]},
+    {"id": "q27", "type": "conceptual", "text": "信用卡额度被盗刷怎么紧急止损", "positive_doc_ids": ["doc_alipay_security"]},
+    {"id": "q28", "type": "disambiguation", "text": "Redis 数据怎么写到磁盘文件", "positive_doc_ids": ["doc_redis_persistence"]},
+    {"id": "q29", "type": "disambiguation", "text": "Redis 集群是怎么自动选主的", "positive_doc_ids": ["doc_redis_sentinel"]},
+    {"id": "q30", "type": "disambiguation", "text": "Redis 多节点之间怎么分片", "positive_doc_ids": ["doc_redis_cluster"]},
+    {"id": "q31", "type": "disambiguation", "text": "TCP 关闭连接需要几个步骤", "positive_doc_ids": ["doc_tcp_close"]},
+    {"id": "q32", "type": "disambiguation", "text": "无连接的传输协议适合什么场景", "positive_doc_ids": ["doc_udp"]},
+    {"id": "q33", "type": "disambiguation", "text": "新冠加强针接种间隔多久", "positive_doc_ids": ["doc_covid_booster"]},
+    {"id": "q34", "type": "disambiguation", "text": "九价 HPV 适合哪个年龄段", "positive_doc_ids": ["doc_hpv_vaccine"]},
+    {"id": "q35", "type": "disambiguation", "text": "淘宝退款多久能到账", "positive_doc_ids": ["doc_taobao_refund"]},
+    {"id": "q36", "type": "disambiguation", "text": "京东退货可以预约上门取件吗", "positive_doc_ids": ["doc_jd_refund"]},
+    {"id": "q37", "type": "multi_positive", "text": "如何在多个节点间实现高可用与故障转移", "positive_doc_ids": ["doc_redis_sentinel", "doc_redis_cluster", "doc_kafka_replication"]},
+    {"id": "q38", "type": "multi_positive", "text": "中国列入世界遗产名录的著名古迹", "positive_doc_ids": ["doc_great_wall", "doc_forbidden_city", "doc_mogao_caves", "doc_terracotta"]},
+    {"id": "q39", "type": "multi_positive", "text": "互联网平台的退款流程怎么走", "positive_doc_ids": ["doc_taobao_refund", "doc_jd_refund"]},
+    {"id": "q40", "type": "multi_positive", "text": "支付应用之间转账的到账时间", "positive_doc_ids": ["doc_wechat_transfer", "doc_alipay_transfer"]}
+  ]
+}

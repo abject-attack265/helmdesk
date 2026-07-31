@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'purposes' => [
+        'avatar' => '头像',
+        'channel_icon' => '渠道图标',
+        'conversation_image' => '会话图片',
+        'conversation_file' => '会话文件',
+        'knowledge_document' => '知识库文档',
+        'import' => '导入文件',
+        'other' => '其他附件',
+    ],
+    'status' => [
+        'pending' => '待上传',
+        'uploaded' => '已上传',
+        'attached' => '已绑定',
+        'failed' => '上传失败',
+        'expired' => '已过期',
+        'deleted' => '已删除',
+    ],
+    'upload_status' => [
+        'pending' => '待上传',
+        'uploading' => '上传中',
+        'completed' => '已完成',
+        'aborted' => '已取消',
+        'expired' => '已过期',
+        'failed' => '上传失败',
+    ],
+    'errors' => [
+        'invalid_upload_mode' => '当前上传方式不支持此操作。',
+        'upload_expired' => '上传已过期，请重新选择文件上传。',
+        'object_mismatch' => '上传文件与上传意图不一致。',
+        'object_missing' => '未找到已上传的文件对象。',
+        'object_size_mismatch' => '上传文件大小不一致。',
+        'object_mime_mismatch' => '上传文件类型不一致。',
+        'invalid_image_metadata' => '无法读取图片元数据。',
+        'object_checksum_mismatch' => '上传文件校验值不一致。',
+        'invalid_upload_state' => '当前上传状态不支持此操作。',
+        'upload_already_completed' => '上传已经完成。',
+        'blocked_mime' => '该文件类型存在安全风险，无法上传，请更换其他文件。',
+        'not_uploaded' => '附件尚未完成上传。',
+        'already_attached' => '附件已被绑定。',
+        'invalid_purpose' => '附件用途不适用于当前操作。',
+        'persist_failed' => '文件写入存储失败，请稍后重试。',
+        'too_many_active_uploads' => '当前会话有过多未完成附件，请稍后重试。',
+    ],
+];

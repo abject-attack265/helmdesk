@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+  <!-- HelmDesk 品牌字标：圆角方块 + messages-square 字形，随系统明暗自动反相，与站内 Logo 一致 -->
+  <style>
+    .bg { fill: #171717; }
+    .fg { fill: none; stroke: #fafafa; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #fafafa; }
+      .fg { stroke: #171717; }
+    }
+  </style>
+  <rect class="bg" x="0" y="0" width="24" height="24" rx="5" />
+  <g class="fg" transform="translate(4.8 4.8) scale(0.6)">
+    <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" />
+    <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
+  </g>
+</svg>

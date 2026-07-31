@@ -1,0 +1,75 @@
+name: linter
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APP_ENV: testing
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5.5'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install PHP Dependencies
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Copy Environment File
+        run: cp .env.example .env
+
+      - name: Generate Application Key
+        run: php artisan key:generate
+
+      - name: Validate Composer Configuration
+        run: composer validate --strict
+
+      - name: Generate Frontend Types and Routes
+        run: |
+          php artisan typescript:transform --no-ansi
+          php artisan wayfinder:generate --with-form --no-ansi
+
+      - name: Check PHP Formatting
+        run: vendor/bin/pint --test
+
+      - name: Check Frontend Formatting
+        run: npm run format:check
+
+      - name: Lint Frontend
+        run: npm run lint
+
+      - name: Check Frontend Types
+        run: npm run typecheck

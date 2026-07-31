@@ -1,0 +1,8 @@
+{
+    "agents": [
+        "cursor",
+        "claude_code",
+        "codex"
+    ],
+    "guidelines": true
+}

@@ -1,0 +1,334 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans:
+    Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@layer utilities {
+  body,
+  html {
+    --font-sans:
+      'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+      'Noto Color Emoji';
+  }
+}
+
+:root {
+  color-scheme: light;
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(0 0% 3.9%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(0 0% 3.9%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(0 0% 3.9%);
+  --primary: hsl(0 0% 9%);
+  --primary-foreground: hsl(0 0% 98%);
+  --secondary: hsl(0 0% 92.1%);
+  --secondary-foreground: hsl(0 0% 9%);
+  --muted: hsl(0 0% 96.1%);
+  --muted-foreground: hsl(0 0% 45.1%);
+  --accent: hsl(0 0% 96.1%);
+  --accent-foreground: hsl(0 0% 9%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(0 0% 92.8%);
+  --input: hsl(0 0% 89.8%);
+  --ring: hsl(0 0% 3.9%);
+  --chart-1: hsl(12 76% 61%);
+  --chart-2: hsl(173 58% 39%);
+  --chart-3: hsl(197 37% 24%);
+  --chart-4: hsl(43 74% 66%);
+  --chart-5: hsl(27 87% 67%);
+  --radius: 0.5rem;
+  --sidebar-background: hsl(0 0% 98%);
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: hsl(0 0% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(0 0% 94%);
+  --sidebar-accent-foreground: hsl(0 0% 30%);
+  --sidebar-border: hsl(0 0% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: hsl(0 0% 98%);
+  --scrollbar-thumb: hsl(0 0% 72%);
+  --scrollbar-thumb-hover: hsl(0 0% 55%);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: hsl(0 0% 3.9%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(0 0% 3.9%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(0 0% 3.9%);
+  --popover-foreground: hsl(0 0% 98%);
+  --primary: hsl(0 0% 98%);
+  --primary-foreground: hsl(0 0% 9%);
+  --secondary: hsl(0 0% 14.9%);
+  --secondary-foreground: hsl(0 0% 98%);
+  --muted: hsl(0 0% 16.08%);
+  --muted-foreground: hsl(0 0% 63.9%);
+  --accent: hsl(0 0% 14.9%);
+  --accent-foreground: hsl(0 0% 98%);
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(0 0% 14.9%);
+  --input: hsl(0 0% 14.9%);
+  --ring: hsl(0 0% 83.1%);
+  --chart-1: hsl(220 70% 50%);
+  --chart-2: hsl(160 60% 45%);
+  --chart-3: hsl(30 80% 55%);
+  --chart-4: hsl(280 65% 60%);
+  --chart-5: hsl(340 75% 55%);
+  --sidebar-background: hsl(0 0% 7%);
+  --sidebar-foreground: hsl(0 0% 95.9%);
+  --sidebar-primary: hsl(360, 100%, 100%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(0 0% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(0 0% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: hsl(240 5.9% 10%);
+  --scrollbar-thumb: hsl(0 0% 35%);
+  --scrollbar-thumb-hover: hsl(0 0% 48%);
+}
+
+@keyframes msg-img-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* 原生滚动条使用透明轨道，避免内部滚动区在深色模式下出现浅色背景。 */
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track,
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-color: var(--scrollbar-thumb);
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+}
+
+/* 聊天气泡里 v-html 注入的 markdown 内容统一排版：
+   后台 AI 助手与 C 端访客聊天（standalone / widget）共用同一套样式。 */
+.ai-markdown p {
+  line-height: 1.65;
+}
+.ai-markdown p + p {
+  margin-top: 0.5rem;
+}
+.ai-markdown h1,
+.ai-markdown h2,
+.ai-markdown h3,
+.ai-markdown h4,
+.ai-markdown h5,
+.ai-markdown h6 {
+  font-weight: 600;
+  line-height: 1.3;
+}
+.ai-markdown h1,
+.ai-markdown h2 {
+  font-size: 0.875rem;
+}
+.ai-markdown h3,
+.ai-markdown h4,
+.ai-markdown h5,
+.ai-markdown h6 {
+  font-size: 0.8125rem;
+}
+.ai-markdown strong {
+  font-weight: 600;
+}
+.ai-markdown em {
+  font-style: italic;
+}
+.ai-markdown a {
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ai-markdown code {
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.25rem;
+  /* 用前景色半透明叠加，让底色（白底气泡 / 灰底气泡 / 暗色）都能得到一致的细微强调，
+     避免写死 --background 在非白底气泡（如后台 bg-muted 气泡）上显得偏白。 */
+  background-color: oklch(from var(--foreground) l c h / 6%);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+}
+.ai-markdown pre {
+  max-width: 100%;
+  overflow: auto;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border);
+  background-color: oklch(from var(--foreground) l c h / 6%);
+  padding: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: pre;
+  color: var(--foreground);
+}
+.ai-markdown pre code {
+  padding: 0;
+  background: transparent;
+  font-size: inherit;
+}
+.ai-markdown blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 0.5rem;
+  color: var(--muted-foreground);
+}
+.ai-markdown ul,
+.ai-markdown ol {
+  padding-left: 1rem;
+  line-height: 1.65;
+}
+.ai-markdown ul {
+  list-style: disc;
+}
+.ai-markdown ol {
+  list-style: decimal;
+}
+.ai-markdown li + li {
+  margin-top: 0.25rem;
+}
+.ai-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+.ai-markdown th {
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  padding: 0.25rem 0.5rem;
+  /* 表头改用前景色半透明叠加，灰底气泡（后台接待）下不再比表体偏白。 */
+  background-color: oklch(from var(--foreground) l c h / 6%);
+}
+.ai-markdown td {
+  padding: 0.25rem 0.5rem;
+  border-top: 1px solid oklch(from var(--border) l c h / 60%);
+  vertical-align: top;
+}
+.ai-markdown hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0.5rem 0;
+}
+/* 流式输出时，光标贴在最后一个块元素的文字末尾，跟随同一行而非另起一行 */
+.ai-markdown--streaming > *:last-child::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  transform: translateY(-1px);
+  background-color: currentColor;
+  animation: ai-caret-pulse 1s ease-in-out infinite;
+}
+@keyframes ai-caret-pulse {
+  50% {
+    opacity: 0.2;
+  }
+}

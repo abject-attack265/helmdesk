@@ -1,0 +1,70 @@
+/**
+ * 会话相关页面的英文前端国际化文案。
+ */
+export default {
+  // 列表页
+  查看所有联系人的会话历史: 'View conversation history across all contacts',
+  全部状态: 'All statuses',
+  收件箱状态: 'Inbox status',
+  全部收件箱状态: 'All inbox statuses',
+  分配给: 'Assigned to',
+  全部分配: 'All assignees',
+  未分配: 'Unassigned',
+  接待方案版本: 'Reception plan version',
+  全部接待方案版本: 'All reception plan versions',
+  版本: 'Version',
+  主题: 'Subject',
+  最后消息: 'Last message',
+  无主题会话: 'Untitled conversation',
+  匿名访客: 'Anonymous visitor',
+  '匿名访客 #{suffix}': 'Anonymous visitor #{suffix}',
+  暂无会话记录: 'No conversations yet',
+  只看没有标签的会话: 'Only show untagged conversations',
+  '第 :current 页，共 :last 页': 'Page :current of :last',
+
+  // 详情抽屉
+  返回会话: 'Back to conversation',
+  最后消息时间: 'Last message',
+  已归档: 'Archived',
+  聊天记录: 'Chat history',
+  仅对话: 'Messages only',
+  只看处理记录: 'Activity only',
+  加载更早记录: 'Load earlier records',
+  '正在加载更早的记录…': 'Loading earlier records…',
+  向上滚动查看更早的记录: 'Scroll up to view earlier records',
+  没有更早的记录了: 'No earlier records',
+  暂无聊天消息: 'No chat messages',
+  暂无处理记录: 'No activity',
+  暂无记录: 'No records',
+  '第 {n} 次会话': 'Conversation {n}',
+  进行中: 'Ongoing',
+  暂无消息: 'No messages yet',
+  搜索聊天记录: 'Search chat history',
+  输入联系人或消息内容: 'Enter a contact or message',
+  '搜索中...': 'Searching...',
+  没有找到相关联系人或消息: 'No matching contacts or messages found',
+  '搜索失败，请稍后重试': 'Search failed. Please try again later.',
+  最近搜索: 'Recent searches',
+  仅搜索该联系人的消息: 'Search messages from this contact only',
+  取消搜索: 'Cancel search',
+  搜索所有联系人和消息: 'Search all contacts and messages',
+
+  // 消息气泡 / 事件
+  处理记录: 'Activity',
+  显示处理记录: 'Show activity',
+  隐藏处理记录: 'Hide activity',
+  处理记录已隐藏: 'Activity is hidden',
+  '聊天记录加载失败，请稍后重试':
+    'Failed to load the chat history. Please try again.',
+  复制本次接待编号: 'Copy support session reference',
+  复制消息编号: 'Copy message reference',
+  工具: 'Tool',
+  无内容: 'No content',
+  'AI 正在回复': 'AI is replying',
+  收起详情: 'Collapse details',
+  重新翻译: 'Translate again',
+
+  // 自定义字段布尔值
+  是: 'Yes',
+  否: 'No',
+} as const;

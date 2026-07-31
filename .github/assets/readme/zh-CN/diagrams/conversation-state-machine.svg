@@ -1,0 +1,191 @@
+<svg viewBox="0 0 1600 760" width="1600" height="760" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">HelmDesk 会话状态转移图</title>
+  <desc id="desc">展示会话生命周期、接待状态及十五条编号转移，并标明关单后创建新会话的路径。</desc>
+
+  <style>
+    text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    .title { fill: #111318; font-size: 25px; font-weight: 750; letter-spacing: 0.01em; }
+    .subtitle { fill: #68707d; font-size: 13px; }
+    .eyebrow { fill: #68707d; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; }
+    .region { fill: #fbfcfd; stroke: #d8dde5; stroke-width: 1.5; stroke-dasharray: 8 6; }
+    .region-label { fill: #59616e; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
+    .node { fill: #ffffff; stroke-width: 2; }
+    .node-title { fill: #15181e; font-size: 20px; font-weight: 750; }
+    .node-code {
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .entry { fill: #eef1f5; stroke: #d4d9e1; stroke-width: 1.5; }
+    .entry-title { fill: #15181e; font-size: 16px; font-weight: 700; }
+    .decision { fill: #ffffff; stroke: #89919e; stroke-width: 1.5; }
+    .edge { fill: none; stroke: #5e6673; stroke-width: 2; marker-end: url(#arrow); }
+    .edge.auto { stroke-dasharray: 8 6; }
+    .edge-label-bg { fill: #ffffff; opacity: 0.96; }
+    .edge-label { fill: #4f5866; font-size: 11px; font-weight: 600; text-anchor: middle; }
+    .edge-label.strong { fill: #181b21; font-weight: 700; }
+    .badge { fill: #ffffff; stroke: #20242b; stroke-width: 1.5; }
+    .badge.auto { stroke-dasharray: 3 2.5; }
+    .badge-text { fill: #171a20; font-size: 11px; font-weight: 750; text-anchor: middle; }
+    .legend { fill: #59616e; font-size: 12px; }
+    .divider { stroke: #e5e8ed; stroke-width: 1; }
+  </style>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5e6673"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="760" fill="#ffffff"/>
+
+  <!-- 标题 -->
+  <text class="eyebrow" x="48" y="36">RECEPTION STATE MODEL</text>
+  <text class="title" x="48" y="68">HelmDesk 会话状态转移图</text>
+  <text class="subtitle" x="48" y="92">Conversation 生命周期与 Inbox 接待状态</text>
+
+  <!-- 新会话入口 -->
+  <rect class="entry" x="550" y="106" width="300" height="62" rx="31"/>
+  <text class="entry-title" x="700" y="143" text-anchor="middle">访客首条消息</text>
+
+  <!-- open 生命周期区域 -->
+  <rect class="region" x="40" y="190" width="1160" height="462" rx="18"/>
+  <text class="region-label" x="62" y="628">STATUS = OPEN</text>
+
+  <!-- 初始路由决策 -->
+  <path class="edge auto" d="M700,168 L700,202"/>
+  <path class="decision" d="M700,202 L724,226 L700,250 L676,226 Z"/>
+  <text class="eyebrow" x="700" y="229" text-anchor="middle">ROUTE</text>
+
+  <!-- ① 初始路由到 AI -->
+  <path class="edge auto" d="M678,232 C560,248 330,246 214,310"/>
+  <circle class="badge auto" cx="425" cy="244" r="12"/>
+  <text class="badge-text" x="425" y="248">1</text>
+  <rect class="edge-label-bg" x="255" y="257" width="290" height="28" rx="7"/>
+  <text class="edge-label" x="400" y="276">进入 AI 接待</text>
+
+  <!-- ② 初始路由到排队 -->
+  <path class="edge auto" d="M710,246 C712,274 670,285 627,310"/>
+  <circle class="badge auto" cx="700" cy="276" r="12"/>
+  <text class="badge-text" x="700" y="280">2</text>
+  <rect class="edge-label-bg" x="748" y="257" width="365" height="28" rx="7"/>
+  <text class="edge-label" x="930.5" y="276">进入人工队列</text>
+
+  <!-- 状态节点：AI 接待 -->
+  <rect class="node" x="70" y="320" width="260" height="112" rx="14" stroke="#2868d7"/>
+  <text class="node-title" x="94" y="354">AI 接待中</text>
+  <text class="node-code" x="94" y="393" fill="#2868d7">ai_handling · 无负责人</text>
+
+  <!-- 状态节点：排队 -->
+  <rect class="node" x="470" y="320" width="280" height="112" rx="14" stroke="#a96d08"/>
+  <text class="node-title" x="494" y="354">人工排队</text>
+  <text class="node-code" x="494" y="393" fill="#a96d08">teammate_pending · 无负责人</text>
+
+  <!-- 状态节点：人工接待 -->
+  <rect class="node" x="880" y="320" width="280" height="112" rx="14" stroke="#20242b"/>
+  <text class="node-title" x="904" y="354">人工接待中</text>
+  <text class="node-code" x="904" y="393" fill="#4f5866">teammate_handling · 有负责人</text>
+
+  <!-- 状态节点：已关闭 -->
+  <rect class="node" x="1290" y="320" width="260" height="112" rx="14" stroke="#7b8492"/>
+  <text class="node-title" x="1314" y="354">已关闭</text>
+  <text class="node-code" x="1314" y="393" fill="#6b7482">status = closed</text>
+
+  <!-- ③ AI → 排队：AI 主动转人工 -->
+  <path class="edge" d="M330,334 L462,334"/>
+  <circle class="badge" cx="369" cy="334" r="11"/>
+  <text class="badge-text" x="369" y="338">3</text>
+  <text class="edge-label strong" x="414" y="326">请求转人工</text>
+
+  <!-- ④ AI → 排队：AI turn 彻底失败 -->
+  <path class="edge auto" d="M330,357 L462,357"/>
+  <circle class="badge auto" cx="369" cy="357" r="11"/>
+  <text class="badge-text" x="369" y="361">4</text>
+  <text class="edge-label" x="417" y="352">AI 处理失败</text>
+
+  <!-- ⑤ 排队 → AI：坐席手动 -->
+  <path class="edge" d="M470,386 L338,386"/>
+  <circle class="badge" cx="430" cy="386" r="11"/>
+  <text class="badge-text" x="430" y="390">5</text>
+  <text class="edge-label strong" x="400" y="379">转 AI</text>
+
+  <!-- ⑥ 排队 → AI：排队超时 -->
+  <path class="edge auto" d="M470,409 L338,409"/>
+  <circle class="badge auto" cx="430" cy="409" r="11"/>
+  <text class="badge-text" x="430" y="413">6</text>
+  <text class="edge-label" x="381" y="433">排队超时</text>
+
+  <!-- ⑦ 排队 → 人工：认领或回复隐式认领 -->
+  <path class="edge" d="M750,342 L872,342"/>
+  <circle class="badge" cx="786" cy="342" r="11"/>
+  <text class="badge-text" x="786" y="346">7</text>
+  <text class="edge-label strong" x="831" y="334">认领 / 回复</text>
+
+  <!-- ⑮ 人工 → 排队：AI 不可用时释放 -->
+  <path class="edge" d="M880,407 L758,407"/>
+  <circle class="badge" cx="844" cy="407" r="11"/>
+  <text class="badge-text" x="844" y="411">15</text>
+  <text class="edge-label strong" x="806" y="388">释放（AI 不可用）</text>
+
+  <!-- ⑩ 人工 → AI：坐席无响应超时 -->
+  <path class="edge auto" d="M980,433 C820,600 408,600 232,433"/>
+  <circle class="badge auto" cx="606" cy="576" r="12"/>
+  <text class="badge-text" x="606" y="580">10</text>
+  <rect class="edge-label-bg" x="628" y="560" width="310" height="30" rx="7"/>
+  <text class="edge-label" x="783" y="579">无响应超时</text>
+
+  <!-- ⑧ AI → 人工：显式认领 -->
+  <path class="edge" d="M294,433 C470,482 752,482 920,433"/>
+  <circle class="badge" cx="562" cy="473" r="12"/>
+  <text class="badge-text" x="562" y="477">8</text>
+  <rect class="edge-label-bg" x="614" y="458" width="172" height="28" rx="7"/>
+  <text class="edge-label strong" x="700" y="476">显式认领</text>
+
+  <!-- ⑨ 人工 → AI：负责人手动交回 -->
+  <path class="edge" d="M944,433 C790,536 456,536 272,433"/>
+  <circle class="badge" cx="654" cy="520" r="12"/>
+  <text class="badge-text" x="654" y="524">9</text>
+  <rect class="edge-label-bg" x="676" y="504" width="250" height="30" rx="7"/>
+  <text class="edge-label strong" x="801" y="523">释放（AI 可用）</text>
+
+  <!-- ⑪ 人工接待自环：转同事或抢单 -->
+  <path class="edge" d="M1088,319 C1180,246 1218,356 1164,373"/>
+  <circle class="badge" cx="1176" cy="281" r="12"/>
+  <text class="badge-text" x="1176" y="285">11</text>
+  <rect class="edge-label-bg" x="1040" y="208" width="150" height="27" rx="7"/>
+  <text class="edge-label strong" x="1115" y="226">转交 / 接管</text>
+
+  <!-- ⑫⑬ open → closed -->
+  <text class="edge-label strong" x="1245" y="305">任一 open 接待状态</text>
+  <path class="edge" d="M1200,346 L1282,346"/>
+  <circle class="badge" cx="1230" cy="346" r="11"/>
+  <text class="badge-text" x="1230" y="350">12</text>
+  <text class="edge-label strong" x="1245" y="328">手动关单</text>
+  <path class="edge auto" d="M1200,392 L1282,392"/>
+  <circle class="badge auto" cx="1230" cy="392" r="11"/>
+  <text class="badge-text" x="1230" y="396">13</text>
+  <text class="edge-label" x="1245" y="375">空闲自动关单</text>
+
+  <!-- ⑭ closed → 人工：重开 -->
+  <path class="edge" d="M1408,433 C1392,620 1188,620 1082,440"/>
+  <circle class="badge" cx="1278" cy="585" r="12"/>
+  <text class="badge-text" x="1278" y="589">14</text>
+  <rect class="edge-label-bg" x="1080" y="584" width="180" height="30" rx="7"/>
+  <text class="edge-label strong" x="1170" y="603">操作人重开并接待</text>
+
+  <!-- 关闭后访客发新消息：创建新会话并重新路由 -->
+  <path class="edge auto" d="M1436,319 C1490,160 1170,110 858,134"/>
+  <circle class="badge auto" cx="1264" cy="151" r="12"/>
+  <text class="badge-text" x="1264" y="155">N</text>
+  <rect class="edge-label-bg" x="1002" y="119" width="221" height="28" rx="8"/>
+  <text class="edge-label strong" x="1112.5" y="138">新消息 → 新 Conversation</text>
+
+  <!-- 图例 -->
+  <line class="divider" x1="48" y1="688" x2="1552" y2="688"/>
+  <line x1="54" y1="716" x2="92" y2="716" stroke="#5e6673" stroke-width="2"/>
+  <text class="legend" x="104" y="721">实线：人工 / AI 主动</text>
+  <line x1="260" y1="716" x2="298" y2="716" stroke="#5e6673" stroke-width="2" stroke-dasharray="8 6"/>
+  <text class="legend" x="310" y="721">虚线：系统自动</text>
+</svg>

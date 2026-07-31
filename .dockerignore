@@ -1,0 +1,8 @@
+*
+!Dockerfile
+!build/
+build/*
+!build/output/
+build/output/*
+!build/output/helmdesk-linux-amd64
+!build/output/helmdesk-linux-arm64

@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'purposes' => [
+        'avatar' => 'Avatar',
+        'channel_icon' => 'Channel icon',
+        'conversation_image' => 'Conversation image',
+        'conversation_file' => 'Conversation file',
+        'knowledge_document' => 'Knowledge document',
+        'import' => 'Import file',
+        'other' => 'Other attachment',
+    ],
+    'status' => [
+        'pending' => 'Pending',
+        'uploaded' => 'Uploaded',
+        'attached' => 'Attached',
+        'failed' => 'Failed',
+        'expired' => 'Expired',
+        'deleted' => 'Deleted',
+    ],
+    'upload_status' => [
+        'pending' => 'Pending',
+        'uploading' => 'Uploading',
+        'completed' => 'Completed',
+        'aborted' => 'Aborted',
+        'expired' => 'Expired',
+        'failed' => 'Failed',
+    ],
+    'errors' => [
+        'invalid_upload_mode' => 'The upload mode is not valid for this operation.',
+        'upload_expired' => 'The upload has expired. Please upload the file again.',
+        'object_mismatch' => 'The uploaded file does not match the upload intent.',
+        'object_missing' => 'The uploaded object was not found.',
+        'object_size_mismatch' => 'The uploaded file size does not match.',
+        'object_mime_mismatch' => 'The uploaded file type does not match.',
+        'invalid_image_metadata' => 'Unable to read image metadata.',
+        'object_checksum_mismatch' => 'The uploaded file checksum does not match.',
+        'invalid_upload_state' => 'The upload status is not valid for this operation.',
+        'upload_already_completed' => 'The upload has already been completed.',
+        'blocked_mime' => 'The :mime file type is not allowed for security reasons. Please use a different file.',
+        'not_uploaded' => 'The attachment has not finished uploading.',
+        'already_attached' => 'The attachment has already been bound.',
+        'invalid_purpose' => 'The attachment purpose is not valid for this operation.',
+        'persist_failed' => 'Failed to persist the uploaded file. Please try again later.',
+        'too_many_active_uploads' => 'This conversation has too many unfinished attachments. Please try again later.',
+    ],
+];
