@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-HelmDesk is an open-source, self-hosted customer support system for small and medium-sized teams. It brings conversations from websites, Telegram, WeChat Official Accounts, and other channels into one workspace, with AI-powered support, knowledge bases, contact management, and team collaboration.
+HelmDesk is an open-source, self-hosted, AI-native customer support system for small and medium-sized teams. It brings omnichannel customer conversations into one workspace for AI-powered support and team collaboration.
 
 ## Screenshot Preview
 
@@ -24,7 +24,7 @@ HelmDesk is an open-source, self-hosted customer support system for small and me
 
 ### Automatic Message Translation
 
-With a translation provider configured, HelmDesk can translate incoming and outgoing messages into each teammate's preferred language. The inbox keeps the original text and translation together, so agents can hide the translation or request a fresh one without losing context.
+With a translation provider configured, HelmDesk can translate incoming and outgoing messages into each teammate's preferred language. The inbox keeps the original text and translation together, preserving the conversation context when agents hide or refresh a translation.
 
 [![Original customer and agent messages displayed with automatic translations](.github/assets/readme/en/screenshots/message-translation.png)](.github/assets/readme/en/screenshots/message-translation.png)
 
@@ -36,7 +36,7 @@ Agents can write a reply in the language they know best, preview the translation
 
 ## Key Features
 
-- Multi-channel conversation intake and a unified inbox
+- Omnichannel conversation intake and a unified inbox
 - AI-powered automated support, reply assistance, and conversation summaries
 - Automatic inbox translation and visitor-facing reply previews
 - Knowledge base management and retrieval testing
@@ -72,32 +72,30 @@ Once started, open `http://localhost:8080`.
 
 ## Building
 
-All build artifacts are stored in `build/output`.
+Build artifacts are stored in `build/output`.
+
+Every build requires a SemVer such as `1.0.0`. Make commands use `APP_VERSION`, and PowerShell uses `-AppVersion`.
 
 ### Linux
 
 Linux binaries are built with Docker Buildx, which requires Docker to be installed and running.
 
-The version is required and must be a SemVer value without a `v` prefix:
-
 | Command                            | Description                                                   | Output                                           |
 | ---------------------------------- | ------------------------------------------------------------- | ------------------------------------------------ |
 | `APP_VERSION=1.0.0 make build`     | Build the Linux binary for the current machine's architecture | `helmdesk-linux-amd64` or `helmdesk-linux-arm64` |
-| `APP_VERSION=1.0.0 make build-all` | Build both the Linux AMD64 and ARM64 binaries                 | Binaries for both architectures                  |
+| `APP_VERSION=1.0.0 make build-all` | Build both Linux AMD64 and ARM64 binaries                     | Binaries for both architectures                  |
 
 ### Windows
 
-The Windows distribution must be built on Windows x86_64 with PowerShell 7. Go, Node.js, Git, Visual Studio C++, LLVM, and Inno Setup 6 are also required.
+Build the Windows distribution on Windows x86_64 with PowerShell 7, Go, Node.js, Git, Visual Studio C++, LLVM, and Inno Setup 6.
 
 ```powershell
 .\build\windows.ps1 -AppVersion 1.0.0
 ```
 
-You can also run `make build-windows APP_VERSION=1.0.0`. By default, the build produces the `HelmDesk-Setup.exe` installer and the `helmdesk-windows-amd64.zip` portable package.
+You can also run `make build-windows APP_VERSION=1.0.0`. The build produces the `HelmDesk-Setup.exe` installer and the `helmdesk-windows-amd64.zip` portable package.
 
-`-AppVersion` is required and must be a SemVer value without a `v` prefix.
-
-Build only the portable package without invoking Inno Setup:
+Build the portable package:
 
 ```powershell
 .\build\windows.ps1 -AppVersion 1.0.0 -SkipInstaller
@@ -109,11 +107,11 @@ HelmDesk's Go runtime embeds FrankenPHP, Mercure, and the complete Laravel appli
 
 ### Linux
 
-We recommend validating the runtime in the foreground before installing it as a systemd service. The examples below use the AMD64 build; on an ARM64 server, replace the filename with `helmdesk-linux-arm64`.
+Download the Linux binary for your server architecture from the [latest GitHub Release](https://github.com/helmdesk-ai/helmdesk/releases/latest). The examples below use `helmdesk-linux-amd64`; ARM64 servers use `helmdesk-linux-arm64`.
 
 #### Foreground Validation
 
-Download the binary, make it executable, and start the HTTP server:
+Download the binary, make it executable, and start HelmDesk:
 
 ```bash
 chmod +x helmdesk-linux-amd64
@@ -128,7 +126,17 @@ Open `http://localhost:8080` to verify the installation, then press `Ctrl+C` to 
 
 #### Install as a systemd Service
 
-After validation, run the installation command. The following configuration lets HelmDesk obtain and renew HTTPS certificates automatically. The domain must already resolve to the server, and TCP ports 80 and 443 must be open:
+Install HelmDesk as a systemd service:
+
+```bash
+sudo ./helmdesk-linux-amd64 install \
+  --public-url http://support.example.com:8080 \
+  --tls-mode plain \
+  --http-address 0.0.0.0:8080 \
+  --storage-path /var/lib/helmdesk
+```
+
+HelmDesk also supports automatic HTTPS. Open TCP ports 80 and 443:
 
 ```bash
 sudo ./helmdesk-linux-amd64 install \
@@ -138,7 +146,7 @@ sudo ./helmdesk-linux-amd64 install \
   --storage-path /var/lib/helmdesk
 ```
 
-If Caddy, Nginx, or a load balancer already terminates TLS, use external TLS mode:
+Use external TLS mode with Nginx:
 
 ```bash
 sudo ./helmdesk-linux-amd64 install \
@@ -147,6 +155,37 @@ sudo ./helmdesk-linux-amd64 install \
   --http-address localhost:8080 \
   --trusted-proxies 127.0.0.1 \
   --storage-path /var/lib/helmdesk
+```
+
+Minimal Nginx configuration:
+
+```nginx
+server {
+    listen 80;
+    server_name support.example.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name support.example.com;
+
+    ssl_certificate /etc/letsencrypt/live/support.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/support.example.com/privkey.pem;
+
+    client_max_body_size 25m;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_buffering off;
+        proxy_read_timeout 3600s;
+    }
+}
 ```
 
 The installation command starts the service and copies the program to `/usr/local/bin/helmdesk`. Configuration is stored in `/etc/helmdesk/config.json`, and business data is stored in `/var/lib/helmdesk`.
@@ -187,11 +226,11 @@ sudo ls -lah /var/lib/helmdesk/logs
 sudo tail -n 200 -F /var/lib/helmdesk/logs/laravel-$(date -u +%F).log
 ```
 
-When installing with a custom `--storage-path`, replace `/var/lib/helmdesk` with the actual directory. Laravel application logs are split by UTC date and retained for 30 days. Service logs and Laravel application logs are independent; `helmdesk logs` does not read or combine Laravel application logs. HelmDesk does not currently record HTTP access logs.
+When installing with a custom `--storage-path`, replace `/var/lib/helmdesk` with the actual directory. Laravel application logs are split by UTC date and retained for 30 days. `helmdesk logs` reads the systemd journal, while Laravel application logs remain available under `<storage-path>/logs`.
 
 ### Windows
 
-`HelmDesk-Setup.exe` installs the program to `C:\Program Files\HelmDesk` and stores configuration and business data in `C:\ProgramData\HelmDesk`. Run the following commands in the “HelmDesk Console” created by the installer.
+Download and run `HelmDesk-Setup.exe` from the [latest GitHub Release](https://github.com/helmdesk-ai/helmdesk/releases/latest). It installs the program to `C:\Program Files\HelmDesk` and stores configuration and business data in `C:\ProgramData\HelmDesk`. Run the following commands in the “HelmDesk Console” created by the installer.
 
 | Command                         | Description                                                      |
 | ------------------------------- | ---------------------------------------------------------------- |
@@ -211,7 +250,7 @@ For local use, run the application directly. The default address is `http://loca
 helmdesk serve
 ```
 
-For a public domain, the runtime can manage HTTPS. The domain must already resolve to the server, and TCP ports 80 and 443 must be open in the firewall:
+HelmDesk also supports automatic HTTPS:
 
 ```powershell
 helmdesk serve `
@@ -222,29 +261,32 @@ helmdesk serve `
   --acme-email admin@example.com
 ```
 
-The installer does not modify the firewall. Before starting HelmDesk, confirm that IIS or another service is not using the required ports.
+Before upgrading, press `Ctrl+C` in the window running `helmdesk serve`, then run `helmdesk upgrade`. The command verifies the installer, creates a pre-upgrade backup, and opens the graphical installer.
 
-Before upgrading, press `Ctrl+C` in the window running `helmdesk serve`, then run `helmdesk upgrade`. The command verifies the GitHub Release asset SHA-256, creates a pre-upgrade backup, and opens the graphical installer. The Windows installer is currently unsigned, so Windows may show an “unknown publisher” or SmartScreen warning. Upgrade integrity is still checked by the installed HelmDesk against the immutable GitHub Release and its asset digest.
-
-Automatic upgrade is not available for the portable ZIP package because PHP and other runtime libraries may also change. Stop HelmDesk and replace the complete runtime directory instead.
-
-## Releasing
-
-Pushing a `v<major>.<minor>.<patch>` tag passes the tag version to every build job, builds Linux AMD64, Linux ARM64, the Windows installer, the Windows portable package, and a multi-platform container image, then publishes the image to GitHub Container Registry and creates a GitHub Release. Immutable releases must be enabled under the repository's Releases settings; automatic upgrade rejects mutable releases.
-
-Windows releases may remain unsigned for now. After obtaining an Authenticode certificate, pass `-SigningCertificateThumbprint` and `-RequireSigning` to the release build.
+Portable ZIP upgrades use a complete runtime replacement. Stop HelmDesk, download the latest portable package, and replace the runtime directory.
 
 ## Docker
 
-Release images are published to GitHub Container Registry with full, major/minor, and `latest` tags. Versions starting from `1.0.0` also receive a major-version tag:
+Pull the current stable image:
 
 ```bash
 docker pull ghcr.io/helmdesk-ai/helmdesk:latest
 ```
 
-After the first publication, set the `helmdesk` package visibility to Public in the GitHub organization package settings so it can be pulled without authentication.
+Run the container:
 
-Managed HTTPS:
+```bash
+docker run -d \
+  --name helmdesk \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -e HELMDESK_PUBLIC_URL=http://localhost:8080 \
+  -e HELMDESK_TLS_MODE=plain \
+  -v helmdesk-data:/data \
+  ghcr.io/helmdesk-ai/helmdesk:latest
+```
+
+Automatic HTTPS:
 
 ```bash
 docker run -d \
@@ -259,20 +301,7 @@ docker run -d \
   ghcr.io/helmdesk-ai/helmdesk:latest
 ```
 
-Plain HTTP:
-
-```bash
-docker run -d \
-  --name helmdesk \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -e HELMDESK_PUBLIC_URL=http://localhost:8080 \
-  -e HELMDESK_TLS_MODE=plain \
-  -v helmdesk-data:/data \
-  ghcr.io/helmdesk-ai/helmdesk:latest
-```
-
-The image always listens on ports 8080 and 8443 and runs as a non-root user. `/data` persists business data and certificates. The following environment variables are available:
+The image listens on ports 8080 and 8443 and runs as the dedicated `helmdesk` user. `/data` persists business data and certificates. The following environment variables are available:
 
 - `HELMDESK_PUBLIC_URL`
 - `HELMDESK_TLS_MODE`
@@ -293,7 +322,7 @@ helmdesk backup --storage-path /srv/helmdesk --output /srv/backup
 helmdesk backup --config /etc/helmdesk/config.json
 ```
 
-By default, the backup is written to `<storage_path>/backups/helmdesk-backup-<UTC timestamp>.tar.gz`. It includes the primary business database, the knowledge base database, the runtime directory's `.env` file, and local business files. It excludes caches, sessions, queues, temporary files, logs, certificates, and attachment objects stored in S3.
+By default, the backup is written to `<storage_path>/backups/helmdesk-backup-<UTC timestamp>.tar.gz`. It contains the primary business database, the knowledge base database, the runtime directory's `.env` file, and local business files. S3 attachment objects follow the backup policy of the configured object storage.
 
 Backups contain runtime keys and business data. Store them in encrypted, access-controlled storage.
 
