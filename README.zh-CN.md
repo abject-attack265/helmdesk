@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-HelmDesk 是一套面向中小团队的开源客服系统，可自行部署。它把网站、Telegram、微信公众号等渠道的会话集中到一个工作台，并提供 AI 接待、知识库、联系人管理和团队协作能力。
+HelmDesk 是一套面向中小团队的开源自托管 AI 原生客服系统，将全渠道客户会话集中到一个工作台，由 AI 与团队协同接待。
 
 ## 界面预览
 
@@ -24,7 +24,7 @@ HelmDesk 是一套面向中小团队的开源客服系统，可自行部署。�
 
 ### 消息自动翻译
 
-配置翻译供应商后，HelmDesk 可以按照客服的语言偏好自动翻译访客与客服消息。收件箱会同时保留原文和译文，客服可以随时隐藏译文或重新翻译，不会丢失会话上下文。
+配置翻译供应商后，HelmDesk 可以按照客服的语言偏好自动翻译访客与客服消息。收件箱会同时保留原文和译文，客服隐藏译文或重新翻译时会话上下文保持完整。
 
 [![访客与客服消息同时显示原文和自动生成的译文](.github/assets/readme/zh-CN/screenshots/message-translation.png)](.github/assets/readme/zh-CN/screenshots/message-translation.png)
 
@@ -36,7 +36,7 @@ HelmDesk 是一套面向中小团队的开源客服系统，可自行部署。�
 
 ## 主要功能
 
-- 多渠道会话接入与统一收件箱
+- 全渠道会话接入与统一收件箱
 - AI 自动接待、回复辅助和会话总结
 - 收件箱消息自动翻译与发送前译文预览
 - 知识库管理与召回测试
@@ -74,11 +74,11 @@ make
 
 构建产物统一保存在 `build/output`。
 
+所有构建都需要传入 `1.0.0` 格式的 SemVer。Make 命令使用 `APP_VERSION`，PowerShell 使用 `-AppVersion`。
+
 ### Linux
 
 Linux 二进制通过 Docker Buildx 构建，需要安装并启动 Docker。
-
-版本号是必传项，使用不带 `v` 前缀的 SemVer：
 
 | 命令                               | 说明                                 | 产物                                             |
 | ---------------------------------- | ------------------------------------ | ------------------------------------------------ |
@@ -87,17 +87,15 @@ Linux 二进制通过 Docker Buildx 构建，需要安装并启动 Docker。
 
 ### Windows
 
-Windows 运行包需要在 Windows x86_64 和 PowerShell 7 环境中构建，并安装 Go、Node.js、Git、Visual Studio C++、LLVM 和 Inno Setup 6。
+Windows 运行包在 Windows x86_64 和 PowerShell 7 环境中构建，需要 Go、Node.js、Git、Visual Studio C++、LLVM 和 Inno Setup 6。
 
 ```powershell
 .\build\windows.ps1 -AppVersion 1.0.0
 ```
 
-也可以执行 `make build-windows APP_VERSION=1.0.0`。默认生成安装器 `HelmDesk-Setup.exe` 和便携包 `helmdesk-windows-amd64.zip`。
+也可以执行 `make build-windows APP_VERSION=1.0.0`。构建会生成安装器 `HelmDesk-Setup.exe` 和便携包 `helmdesk-windows-amd64.zip`。
 
-`-AppVersion` 是必传项，使用不带 `v` 前缀的 SemVer。
-
-只生成便携包，不调用 Inno Setup：
+构建便携包：
 
 ```powershell
 .\build\windows.ps1 -AppVersion 1.0.0 -SkipInstaller
@@ -109,11 +107,11 @@ HelmDesk 的 Go 运行时嵌入 FrankenPHP、Mercure 和完整的 Laravel 应用
 
 ### Linux
 
-建议先以前台方式验证运行环境，确认访问正常后再安装为 systemd 服务。以下示例使用 AMD64 版本；ARM64 服务器将文件名替换为 `helmdesk-linux-arm64`。
+从 [GitHub 最新版本](https://github.com/helmdesk-ai/helmdesk/releases/latest)下载服务器架构对应的 Linux 二进制。以下示例使用 `helmdesk-linux-amd64`，ARM64 服务器使用 `helmdesk-linux-arm64`。
 
 #### 前台验证
 
-下载二进制并添加执行权限，然后启动 HTTP 服务：
+下载二进制并添加执行权限，然后启动 HelmDesk：
 
 ```bash
 chmod +x helmdesk-linux-amd64
@@ -128,7 +126,17 @@ chmod +x helmdesk-linux-amd64
 
 #### 安装为 systemd 服务
 
-验证通过后执行安装命令。以下配置由 HelmDesk 自动申请和续期 HTTPS 证书，域名需提前解析到服务器，并开放 TCP 80/443：
+安装为 systemd 服务：
+
+```bash
+sudo ./helmdesk-linux-amd64 install \
+  --public-url http://support.example.com:8080 \
+  --tls-mode plain \
+  --http-address 0.0.0.0:8080 \
+  --storage-path /var/lib/helmdesk
+```
+
+HelmDesk 也支持自动 HTTPS，需开放 TCP 80/443：
 
 ```bash
 sudo ./helmdesk-linux-amd64 install \
@@ -138,7 +146,7 @@ sudo ./helmdesk-linux-amd64 install \
   --storage-path /var/lib/helmdesk
 ```
 
-已有 Caddy、Nginx 或负载均衡时，使用外部 TLS 模式：
+通过 Nginx 使用外部 TLS 模式：
 
 ```bash
 sudo ./helmdesk-linux-amd64 install \
@@ -147,6 +155,37 @@ sudo ./helmdesk-linux-amd64 install \
   --http-address localhost:8080 \
   --trusted-proxies 127.0.0.1 \
   --storage-path /var/lib/helmdesk
+```
+
+Nginx 最小配置：
+
+```nginx
+server {
+    listen 80;
+    server_name support.example.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name support.example.com;
+
+    ssl_certificate /etc/letsencrypt/live/support.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/support.example.com/privkey.pem;
+
+    client_max_body_size 25m;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_buffering off;
+        proxy_read_timeout 3600s;
+    }
+}
 ```
 
 安装命令会启动服务，并将程序复制到 `/usr/local/bin/helmdesk`。配置保存在 `/etc/helmdesk/config.json`，业务数据保存在 `/var/lib/helmdesk`。
@@ -187,11 +226,11 @@ sudo ls -lah /var/lib/helmdesk/logs
 sudo tail -n 200 -F /var/lib/helmdesk/logs/laravel-$(date -u +%F).log
 ```
 
-使用自定义 `--storage-path` 安装时，请将 `/var/lib/helmdesk` 替换为实际目录。Laravel 应用日志按 UTC 日期切分并保留 30 天。服务运行日志与 Laravel 应用日志相互独立，`helmdesk logs` 不读取或混合 Laravel 应用日志。HelmDesk 当前不记录 HTTP access log。
+使用自定义 `--storage-path` 安装时，请将 `/var/lib/helmdesk` 替换为实际目录。Laravel 应用日志按 UTC 日期切分并保留 30 天。`helmdesk logs` 读取 systemd journal，Laravel 应用日志位于 `<storage-path>/logs`。
 
 ### Windows
 
-`HelmDesk-Setup.exe` 将程序安装到 `C:\Program Files\HelmDesk`，配置和业务数据保存在 `C:\ProgramData\HelmDesk`。以下命令在安装器创建的“HelmDesk 控制台”中执行。
+从 [GitHub 最新版本](https://github.com/helmdesk-ai/helmdesk/releases/latest)下载并运行 `HelmDesk-Setup.exe`。程序安装到 `C:\Program Files\HelmDesk`，配置和业务数据保存在 `C:\ProgramData\HelmDesk`。以下命令在安装器创建的“HelmDesk 控制台”中执行。
 
 | 命令                            | 说明                           |
 | ------------------------------- | ------------------------------ |
@@ -211,7 +250,7 @@ sudo tail -n 200 -F /var/lib/helmdesk/logs/laravel-$(date -u +%F).log
 helmdesk serve
 ```
 
-使用公网域名时，可以由运行时托管 HTTPS。域名需提前解析到服务器，并在防火墙中开放 TCP 80/443：
+HelmDesk 也支持自动 HTTPS：
 
 ```powershell
 helmdesk serve `
@@ -222,29 +261,32 @@ helmdesk serve `
   --acme-email admin@example.com
 ```
 
-安装器不会修改防火墙。启动前需确认端口未被 IIS 等服务占用。
+升级前先在运行 `helmdesk serve` 的窗口中按 `Ctrl+C`，然后执行 `helmdesk upgrade`。命令会校验安装器、创建升级前备份并打开图形安装器。
 
-升级前先在运行 `helmdesk serve` 的窗口中按 `Ctrl+C`，然后执行 `helmdesk upgrade`。命令会校验 GitHub Release 资产的 SHA-256、创建升级前备份并打开图形安装器。Windows 安装器当前没有代码签名，系统可能显示“未知发布者”或 SmartScreen 提示；升级完整性由已安装的 HelmDesk 通过 GitHub 不可变 Release 和资产摘要校验。
-
-ZIP 便携包不支持自动升级，因为 PHP 和其它运行库文件也可能随版本变化；请停止 HelmDesk 后替换整个运行目录。
-
-## 发布
-
-推送 `v<major>.<minor>.<patch>` 标签会把标签中的版本号传入所有构建任务，构建 Linux AMD64、Linux ARM64、Windows 安装器、Windows 便携包和多架构容器镜像，将镜像发布到 GitHub Container Registry，然后创建 GitHub Release。仓库必须在 Settings 的 Releases 区域启用 immutable releases，自动升级会拒绝可变 Release。
-
-Windows 发布允许暂时不配置 Authenticode 证书；取得代码签名证书后，可在发布构建中传入 `-SigningCertificateThumbprint` 和 `-RequireSigning`。
+ZIP 便携包通过完整替换运行目录升级。停止 HelmDesk，下载最新便携包并替换运行目录。
 
 ## Docker
 
-正式镜像发布到 GitHub Container Registry，并提供完整版本、主次版本和 `latest` 标签；从 `1.0.0` 开始还会提供主版本标签：
+拉取当前正式镜像：
 
 ```bash
 docker pull ghcr.io/helmdesk-ai/helmdesk:latest
 ```
 
-首次发布后，需要在 GitHub 组织的 Package 设置中将 `helmdesk` 可见性设为 Public，未登录用户才能直接拉取。
+运行容器：
 
-托管 HTTPS：
+```bash
+docker run -d \
+  --name helmdesk \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -e HELMDESK_PUBLIC_URL=http://localhost:8080 \
+  -e HELMDESK_TLS_MODE=plain \
+  -v helmdesk-data:/data \
+  ghcr.io/helmdesk-ai/helmdesk:latest
+```
+
+自动 HTTPS：
 
 ```bash
 docker run -d \
@@ -259,20 +301,7 @@ docker run -d \
   ghcr.io/helmdesk-ai/helmdesk:latest
 ```
 
-明文 HTTP：
-
-```bash
-docker run -d \
-  --name helmdesk \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -e HELMDESK_PUBLIC_URL=http://localhost:8080 \
-  -e HELMDESK_TLS_MODE=plain \
-  -v helmdesk-data:/data \
-  ghcr.io/helmdesk-ai/helmdesk:latest
-```
-
-镜像固定监听 8080/8443，并使用非 root 用户运行。`/data` 用于持久化业务数据和证书。可用环境变量：
+镜像固定监听 8080/8443，并使用专用的 `helmdesk` 用户运行。`/data` 用于持久化业务数据和证书。可用环境变量：
 
 - `HELMDESK_PUBLIC_URL`
 - `HELMDESK_TLS_MODE`
@@ -293,7 +322,7 @@ helmdesk backup --storage-path /srv/helmdesk --output /srv/backup
 helmdesk backup --config /etc/helmdesk/config.json
 ```
 
-默认文件为 `<storage_path>/backups/helmdesk-backup-<UTC 时间>.tar.gz`。备份包含主业务库、知识库、运行目录 `.env` 和本地业务文件，不包含缓存、Session、队列、临时文件、日志、证书及 S3 中的附件对象。
+默认文件为 `<storage_path>/backups/helmdesk-backup-<UTC 时间>.tar.gz`。备份包含主业务库、知识库、运行目录 `.env` 和本地业务文件。S3 附件对象遵循所配置对象存储的备份策略。
 
 备份中含有运行密钥和业务数据，应保存在受访问控制的加密存储中。
 
